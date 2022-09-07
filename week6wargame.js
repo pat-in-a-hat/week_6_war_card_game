@@ -1,5 +1,20 @@
-//Classic War Card Game
+//Promineo Week 6 Assignment - Classic War Card Game
+//Written by Patrick Warner
 
+/*
+I took this weeks prompt a bit further and built a fully working war card game that plays automatically
+A deck of cards is created, then shuffled, then 26 cards are dealt to each player
+Each player then plays the "top" card (first in array), and the winner puts both cards on the bottom of their hand (end of array)
+In the case of a tie, the tied cards and three more are placed aside
+The next winner after the tie gets all of the cards
+The game continues until one player has no cards left in their hand, and a winner is declared!
+*/
+
+
+//Build a card class with constructor objects for the card value, name, and suit
+//The card value allows us to compare the cards as number values, and gives face cards values ("Jack" is 11)
+//The name is all strings and is the exact name of each (i.e. "2" or "Jack")
+//The suit is an addition in case I want to make this a visual game posted in browser
 class Card {
     constructor(value, name, suit){
         this.value = value;
@@ -9,6 +24,8 @@ class Card {
     }
 }
 
+//Here we have the deck class, with the card names and suits, as well as two empty arrays for the card deck and shuffled deck
+//This will store the bulk of what we need to run the game in another class
 class Deck{
     constructor(){
         this.cardSuit = ["Diamonds", "Hearts", "Clubs", "Spades"];
@@ -18,6 +35,11 @@ class Deck{
         this.shuffledDeck = []
     }
 
+
+    //this iterates through the card name array, with another for loop iterating through suits to apply all 4 suits to each card
+    //the value is assigned by adding 2 to the value of i, as 2 is our lowest card and i starts at 0
+    //we then create a new Card class and push it into the cardDeck array for storage
+    //with 13 names and 4 suits, this fills the cardDeck array with 52 unique Card classes, i.e. a full deck of cards
     deckBuilder(){
         for (let i = 0; i < this.cardName.length; i++){
             let value = i + 2;
@@ -30,6 +52,8 @@ class Deck{
             
     }
 
+
+    //we then need to shuffle the deck, which we do by called the deckBuilder method then putting the cardDeck array into the shuffledDeck array
     //this shuffling method is the Schwartzian Transform and is commonly used for small array shuffling
     //https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
     deckShuffler(){
@@ -48,6 +72,8 @@ class Deck{
     }
 }
 
+//we then have a player class, used to store each players hand. this also requires a name becuase why not
+//as you can see hand is specified as a blank array and does not need to be entered when calling the class
 class Player {
     constructor(name, hand = []){
         this.hand = hand;
@@ -59,6 +85,8 @@ class Player {
     }
 }
 
+//We then utilize a dealer class to distribute the cards to each players hand (player class)
+//two players are created in the constructor, as well as a new deck of cards (deck class)
 class Dealer {
     constructor(){
         this.player1 = new Player("Bob");
@@ -66,14 +94,18 @@ class Dealer {
         this.deck = new Deck();
     }
 
+    //our dealer creates the deck, then iterates through 52 times to distribute cards
+    //I utilized a modulus with a counter to hand cards out to each player
+    //each loop, if the counter is even player 1 gets a card, else player 2 gets a card
+    //this leaves us with two player hands with 26 cards each, we're ready to start the game of war!
     dealer(){
-        this.deck.deckShuffler();
+        this.deck.deckShuffler();//the dealer method calls on the shuffler, which has a deck created then shuffles it
         //console.log(this.deck.shuffledDeck)
         //console.log(this.deck.shuffledDeck.length)
         let counter = 0;
-        for(let i = 52; i > 0; i--){
+        for(let i = 52; i > 0; i--){ 
             //console.log(card)
-            if (counter % 2 === 0){
+            if (counter % 2 === 0){ //modulus in use here
                 this.player1.hand.push(this.deck.shuffledDeck.pop())
                 counter += 1;
                 
@@ -97,12 +129,18 @@ class Dealer {
 
 }
 
+//where the meat gets ground, as they maybe say?
+//the WarGame class creates a new dealer to get everything up and running
 class WarGame {
     constructor(){
         this.dealer = new Dealer();
 
     }
 
+    //we then call the dealer method in the dealer class, which kicks everything into gear
+    //this is because the dealer method referenced many of our other classes and methods, and therefore kicks off everything
+    //we now have two players with unique hands that were recieved from a shuffled deck of cards
+    //we're ready to play!
     gamePlay(){
         this.dealer.dealer();
         const tieArray = [];
@@ -110,13 +148,20 @@ class WarGame {
         let player2WinCounter = 0;
         //console.log(this.dealer.player1.hand)
         //console.log(this.dealer.player2.hand)
+
+    
+        //using a while loop to play the game. the game ends once one player runs out of cards
         while(((this.dealer.player1.hand.length > 0) && (this.dealer.player2.hand.length > 0)) /*&& ((player1WinCounter < 100) && (player2WinCounter < 100))*/ ){
-            let player1card = this.dealer.player1.hand.shift()
+            let player1card = this.dealer.player1.hand.shift()//we pull the "top" (start of array) card from each player here using shift
             let player2card = this.dealer.player2.hand.shift()
             /*console.log("Player 1 starting hand")
             console.log(player1card)
             console.log("Player 2 starting hand")
             console.log(player2card)*/
+
+
+            //then using a series of if else statements we perform the action
+            //if player 1 has a larger card, the win is logged to the console and we then add both cards to the "bottom" of their hand (end of the array)
             if (player1card.value > player2card.value){
                 console.log(`${this.dealer.player1.name}'s ${player1card.name} of ${player1card.suit} beats ${this.dealer.player2.name}'s ${player2card.name} of ${player2card.suit}`)
                 /*console.log("before and after adding to player 1 hand")
@@ -124,6 +169,8 @@ class WarGame {
                 this.dealer.player1.hand.push(player1card)
                 this.dealer.player1.hand.push(player2card)
                 //console.log(this.dealer.player1.hand)
+
+                //this nifty if statement adds all the tied cards to their hand, if the tied cards array is full (i.e. the last round was a tie)
                 if (tieArray.length > 0){
                     console.log("testing if the tie array adds to player 1's hand")
                     console.log(tieArray)
@@ -137,6 +184,9 @@ class WarGame {
                 //console.log("Player 1 win count")
                 //console.log(player1WinCounter)
                 //console.log(this.dealer.player1.hand)
+
+
+            //same stuff, just for player two now
             } else if (player1card.value < player2card.value){
                 console.log(`${this.dealer.player2.name}'s ${player2card.name} of ${player2card.suit} beats ${this.dealer.player1.name}'s ${player1card.name} of ${player1card.suit}`)
                 /*console.log("before and after adding to player 2 hand")
@@ -157,6 +207,11 @@ class WarGame {
                 /*console.log("Player 2 win count")
                 console.log(player2WinCounter)
                 console.log(this.dealer.player2.hand)*/
+
+                //here is our tie array. if the two card values are equal (a tie), the cards are added to an empty array (tieArray)
+                //the idea is that tieArray stores the cards until the next hand, then if someone wins, the if statements for tieArray
+                //are triggered, causing all of the cards set aside from the tie to be added to the winners hand
+                //this also prevents a near infinite loop in the while statement, as without this the game goes on a LOOONG time
             } else {
                 console.log(`${player1card.name} equals ${player2card.name}, cards are held until someone wins`)
                 tieArray.push(player1card)
@@ -171,6 +226,10 @@ class WarGame {
                 console.log(tieArray)
             }
         }
+
+        //after the while loop ends, we assume somone one
+        //we check if its player 1 or player 2 using an if statement
+        //and also have a handy error statement just in case...
         if (this.dealer.player1.hand.length > this.dealer.player2.hand.length){
             alert(`${this.dealer.player1.name} wins!`)
             console.log(`${this.dealer.player1.name} had ${player1WinCounter} wins, while ${this.dealer.player2.name} had ${player2WinCounter} wins`)
@@ -194,6 +253,15 @@ class WarGame {
         }
     }
 }
+
+
+
+
+//well folks, that's the game! hope you enjoyed it
+//we'll see if I get around to utilizing html to make this a visual game where you can see the cards
+
+
+
 
 //let testDeck = new Deck();
 //testDeck.deckShuffler();
