@@ -150,8 +150,9 @@ class WarGame {
         //console.log(this.dealer.player2.hand)
 
     
-        //using a while loop to play the game. the game ends once one player runs out of cards
-        while(((this.dealer.player1.hand.length > 0) && (this.dealer.player2.hand.length > 0)) /*&& ((player1WinCounter < 100) && (player2WinCounter < 100))*/ ){
+        //using a while loop to play the game. the game ends once one player runs out of cards or we get 10,000 plays
+        //this is because the cards are added to the bottom of the hand, and the hand is not shuffled, which I've found has created the occasional infinite loop
+        while(((this.dealer.player1.hand.length > 0) && (this.dealer.player2.hand.length > 0)) && ((player1WinCounter < 10000) && (player2WinCounter < 10000)) ){
             let player1card = this.dealer.player1.hand.shift()//we pull the "top" (start of array) card from each player here using shift
             let player2card = this.dealer.player2.hand.shift()
             /*console.log("Player 1 starting hand")
@@ -172,13 +173,13 @@ class WarGame {
 
                 //this nifty if statement adds all the tied cards to their hand, if the tied cards array is full (i.e. the last round was a tie)
                 if (tieArray.length > 0){
-                    console.log("testing if the tie array adds to player 1's hand")
-                    console.log(tieArray)
+                    //console.log("testing if the tie array adds to player 1's hand")
+                    //console.log(tieArray)
                     for (let i = tieArray.length - 1; i > -1; i--){
                         this.dealer.player1.hand.push(tieArray.pop())
                     }
                     //tieArray.length = 0;
-                    console.log(tieArray)
+                    //console.log(tieArray)
                 }
                 player1WinCounter += 1;
                 //console.log("Player 1 win count")
@@ -195,13 +196,13 @@ class WarGame {
                 this.dealer.player2.hand.push(player2card)
                 //console.log(this.dealer.player2.hand)
                 if (tieArray.length > 0){
-                    console.log("testing if the tie array adds to player 2's hand")
-                    console.log(tieArray)
+                    //console.log("testing if the tie array adds to player 2's hand")
+                    //console.log(tieArray)
                     for (let i = tieArray.length - 1; i > -1; i--){
                         this.dealer.player2.hand.push(tieArray.pop())
                     }
                     //tieArray.length = 0;
-                    console.log(tieArray)
+                    //console.log(tieArray)
                 }
                 player2WinCounter += 1;
                 /*console.log("Player 2 win count")
@@ -212,6 +213,16 @@ class WarGame {
                 //the idea is that tieArray stores the cards until the next hand, then if someone wins, the if statements for tieArray
                 //are triggered, causing all of the cards set aside from the tie to be added to the winners hand
                 //this also prevents a near infinite loop in the while statement, as without this the game goes on a LOOONG time
+            /*} else if (player1card.value = player2card.value && this.dealer.player1.hand.length < 5){
+                for (let i in this.dealer.player1.hand.length){
+                    this.dealer.player2.hand.push(this.dealer.player1.hand.shift())
+                }
+                
+            } else if(player1card.value = player2card.value && this.dealer.player2.hand.length < 5){//these two elif statements ensure that if someone is short cards to play out the tie, they lose
+                for (let i in this.dealer.player2.hand.length){
+                    this.dealer.player1.hand.push(this.dealer.player2.hand.shift())
+                }*/
+                
             } else {
                 console.log(`${player1card.name} equals ${player2card.name}, cards are held until someone wins`)
                 tieArray.push(player1card)
@@ -224,26 +235,64 @@ class WarGame {
                 tieArray.push(this.dealer.player2.hand.shift())
                 console.log("Tie array printed below")
                 console.log(tieArray)
+
+                /*if (this.dealer.player1.hand.length = 0){
+                    this.dealer.player2.hand.push(tieArray)
+
+                } else if (this.dealer.player2.hand.length = 0){
+                    this.dealer.player1.hand.push(tieArray)
+
+                } else{
+                    console.log("enough cards tie is passed through") //this attempt to have a tie end the game did not work, instead implementing this outside the while loop
+                }*/
+
             }
         }
 
-        //after the while loop ends, we assume somone one
+        //after the while loop ends, we assume somone won
         //we check if its player 1 or player 2 using an if statement
         //and also have a handy error statement just in case...
         if (this.dealer.player1.hand.length > this.dealer.player2.hand.length){
             alert(`${this.dealer.player1.name} wins!`)
+
+            for (let i = tieArray.length; i > -1; i--){
+                if (tieArray[0] instanceof Card){
+                    this.dealer.player1.hand.push(tieArray.shift())//push any cards from the tie into the hand to make a full 52
+                } else{
+                    tieArray.shift()
+                }
+            }
+
+
             console.log(`${this.dealer.player1.name} had ${player1WinCounter} wins, while ${this.dealer.player2.name} had ${player2WinCounter} wins`)
             console.log("Player 1 hand")
             console.log(this.dealer.player1.hand)
             console.log("Player 2 hand")
             console.log(this.dealer.player2.hand)
+            
+            //console.log(tieArray)
+
         } else if (this.dealer.player2.hand.length > this.dealer.player1.hand.length){
             alert(`${this.dealer.player2.name} wins!`)
+            
+            for (let i = tieArray.length; i > -1; i--){
+                if (tieArray[0] instanceof Card){
+                    this.dealer.player2.hand.push(tieArray.shift())//push any cards from the tie into the hand to make a full 52
+                } else{
+                    tieArray.shift()
+                }
+            }
+
             console.log(`${this.dealer.player2.name} had ${player2WinCounter} wins, while ${this.dealer.player1.name} had ${player1WinCounter} wins`)
             console.log("Player 2 hand")
             console.log(this.dealer.player2.hand)
             console.log("Player 1 Hand")
             console.log(this.dealer.player1.hand)
+
+            //console.log(tieArray)
+
+
+
         }else{
             throw(new Error ("Error... We don't know what happened...")) /*else if(player1WinCounter > player2WinCounter){
             alert(`player 1 wins by default`)
