@@ -80,9 +80,6 @@ class Player {
         this.name = name;
     }
 
-    handBuilder(){
-        
-    }
 }
 
 //We then utilize a dealer class to distribute the cards to each players hand (player class)

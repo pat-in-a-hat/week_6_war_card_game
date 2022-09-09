@@ -1,0 +1,23 @@
+{
+  "name": "week-6-war-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "week6wargame.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pat-in-a-hat/week_6_war_card_game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pat-in-a-hat/week_6_war_card_game/issues"
+  },
+  "homepage": "https://github.com/pat-in-a-hat/week_6_war_card_game#readme",
+  "dependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
+  }
+}
